@@ -4,10 +4,10 @@ clear all; close all; clc;
 d = 1; % dimension
 J = 1; 
 h = 0; % external field
-alpha = 0.1:0.1:0.9;
+alpha = 0.1:0.05:0.9;
 % ref: [Romain Bachelard, Michael Kastner]Universal Threshold for the Dynamical Behavior of Lattice Systems with Long-Range Interactions
 
-N = 250:250:3000;
+N = 500:500:5000;
 modo = 'random'; % random|static
 nps = N; %nps = Number of Points to Show
 
@@ -19,12 +19,19 @@ time_steps = 100;
 
 
 %% Simulating
-for aa = 1:length(alpha)
-    for nn=1:length(N)
-            [d_ij, mouse_idx,y_t,spin0,time_span] = generate_data(modo, N(nn), nps(nn),time_init,time_end,time_steps,alpha(aa),d,J);
-            mouse_points = zeros(time_steps,nps(nn));
+    system('rd /s /q C:\Users\Simus\Desktop\Noel\Quantum-Ising-master\Results\alpha')
+    system('mkdir C:\Users\Simus\Desktop\Noel\Quantum-Ising-master\Results\alpha')
+    system('del C:\Users\Simus\Desktop\Noel\Quantum-Ising-master\*.png')
 
-            disp('Working on')
+for aa = 1:length(alpha)
+    clc
+    disp(sprintf('Alpha : %d/%d -- %.2f/%.2f',aa,length(alpha),alpha(aa),alpha(end)))
+    pause(0.5)
+    for nn=1:length(N)
+        [d_ij, mouse_idx,y_t,spin0,time_span] = generate_data(modo, N(nn), nps(nn),time_init,time_end,time_steps,alpha(aa),d,J);
+        mouse_points = zeros(time_steps,nps(nn));
+
+        disp(sprintf('Particle : %d/%d -- %.d/%.d',nn,length(N),N(nn),N(end)))
         tic;
         for t = 1:time_steps
            % disp(time_span(t))
@@ -51,14 +58,20 @@ for aa = 1:length(alpha)
             plot(time_span, (y_t),'-k','LineWidth',5)
             xlabel('Time')
             ylabel('< Spin >')
-            titulo = sprintf('alpha=%.2d, N=%d',alpha(aa),N(nn));
+            titulo = sprintf('alpha=%.2f, N=%d',alpha(aa),N(nn));
             title(titulo)
 
             set(gcf, 'renderer', 'opengl')
             print(fig,strcat(titulo,'.png'),'-dpng')
             close all
     end
-    system(strcat('rm -r Results/',sprintf('alpha=%.2d',alpha(aa))))
-    system(strcat('mkdir Results/',sprintf('alpha=%.2d',alpha(aa))))
-    system(strcat('mv *png Results/',sprintf('alpha=%.2d',alpha(aa))))
+    pause(1)
+%     system(strcat('rm -r Results/',sprintf('alpha=%.2d',alpha(aa))))
+%     system(strcat('mkdir Results/',sprintf('alpha=%.2d',alpha(aa))))
+%     system(strcat('mv *png Results/',sprintf('alpha=%.2d',alpha(aa))))
+%     system(strcat('rmdir C:\Users\Simus\Desktop\Noel\Quantum-Ising-master\Results\alpha\',sprintf('%.2f',alpha(aa))))
+    system(strcat('mkdir C:\Users\Simus\Desktop\Noel\Quantum-Ising-master\Results\alpha\',sprintf('%.2f',alpha(aa))))
+    system(strcat('move C:\Users\Simus\Desktop\Noel\Quantum-Ising-master\*.png C:\Users\Simus\Desktop\Noel\Quantum-Ising-master\Results\alpha\',sprintf('%.2f\\',alpha(aa))))
+    
 end
+
