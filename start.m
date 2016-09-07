@@ -4,12 +4,11 @@ clear all; close all; clc;
 d = 1; % dimension
 J = 1; 
 h = 0; % external field
-alpha = 0.1:0.05:0.9;
+alpha = [0.1 0.2 0.42 0.60 0.97];
 % ref: [Romain Bachelard, Michael Kastner]Universal Threshold for the Dynamical Behavior of Lattice Systems with Long-Range Interactions
 
-N = 500:500:5000;
+N = [20 50 100 150 500 1000];
 modo = 'random'; % random|static
-nps = N; %nps = Number of Points to Show
 
 time_init = 0;
 time_end = 1;
@@ -19,9 +18,16 @@ time_steps = 100;
 
 
 %% Simulating
-    system('rd /s /q C:\Users\Simus\Desktop\Noel\Quantum-Ising-master\Results\alpha')
-    system('mkdir C:\Users\Simus\Desktop\Noel\Quantum-Ising-master\Results\alpha')
-    system('del C:\Users\Simus\Desktop\Noel\Quantum-Ising-master\*.png')
+%     system('rd /s /q C:\Users\Simus\Desktop\Noel\Quantum-Ising-master\Results\alpha')
+%     system('mkdir C:\Users\Simus\Desktop\Noel\Quantum-Ising-master\Results\alpha')
+%     system('del C:\Users\Simus\Desktop\Noel\Quantum-Ising-master\*.png')
+
+system('rm -r Results/alpha')
+system('mkdir Results/alpha')
+system('rm *.png')
+
+% !! do not change the nps value, there is an issue !!
+nps = N; %nps = Number of Points to Show
 
 for aa = 1:length(alpha)
     clc
@@ -55,23 +61,45 @@ for aa = 1:length(alpha)
             plot(time_span, (abs(mouse_points(:,ii))),'color',rand([1 3]))
             hold on
         end
-            plot(time_span, (y_t),'-k','LineWidth',5)
-            xlabel('Time')
-            ylabel('< Spin >')
-            titulo = sprintf('alpha=%.2f, N=%d',alpha(aa),N(nn));
-            title(titulo)
+        plot(time_span, (y_t),'-k','LineWidth',5)
+        xlabel('Time')
+        ylabel('< Spin >')
+        titulo = sprintf('alpha=%.2f, N=%d',alpha(aa),N(nn));
+        title(titulo)
 
-            set(gcf, 'renderer', 'opengl')
-            print(fig,strcat(titulo,'.png'),'-dpng')
-            close all
+        set(gcf, 'renderer', 'opengl')
+        print(fig,strcat(titulo,'.png'),'-dpng')
+        close all
+        
+        %% Fit y = exp((-t/t_0)^2)
+        % --> sqrt(-log(y)) = t/t_0
+        % --> [[[    t = t_0*sqrt(-log(y))    ]]]
+        % t and t_0 are linear as seen at the equation above
+        % this equation is used to compute the fit
+        for ii=1:nps
+            time_span0 = time_span';
+            half_life = abs(mouse_points(:,ii));
+            time_span0(find(half_life <= 0.25)) = [];
+            half_life(find(half_life <= 0.25)) = [];
+            [c, gof] = fit(time_span0,sqrt(-log(half_life)),'poly1');
+            t_0(ii) = c.p1;
+        end
+        
+        [mu, sigma] = normfit(t_0); % get the mean and sigma to plot on the histogram
+        titulo = sprintf('alpha = %.2f,N = %d, mean = %.2f, sigma = %.3f',alpha(aa),N(nn),mu,sigma);
+        histfit(t_0); %create histograma with norm fit automatically
+        title(titulo)
+        print(gcf,strcat(titulo,'.png'),'-dpng')
+        close all
     end
     pause(1)
-%     system(strcat('rm -r Results/',sprintf('alpha=%.2d',alpha(aa))))
-%     system(strcat('mkdir Results/',sprintf('alpha=%.2d',alpha(aa))))
-%     system(strcat('mv *png Results/',sprintf('alpha=%.2d',alpha(aa))))
-%     system(strcat('rmdir C:\Users\Simus\Desktop\Noel\Quantum-Ising-master\Results\alpha\',sprintf('%.2f',alpha(aa))))
-    system(strcat('mkdir C:\Users\Simus\Desktop\Noel\Quantum-Ising-master\Results\alpha\',sprintf('%.2f',alpha(aa))))
-    system(strcat('move C:\Users\Simus\Desktop\Noel\Quantum-Ising-master\*.png C:\Users\Simus\Desktop\Noel\Quantum-Ising-master\Results\alpha\',sprintf('%.2f\\',alpha(aa))))
+
+    system(strcat('mkdir Results/alpha/',sprintf('%.2f',alpha(aa))))
+    system(strcat('mv *png Results/alpha/',sprintf('%.2f',alpha(aa))))
+
+%     system(strcat('mkdir C:\Users\Simus\Desktop\Noel\Quantum-Ising-master\Results\alpha\',sprintf('%.2f',alpha(aa))))
+%     system(strcat('move C:\Users\Simus\Desktop\Noel\Quantum-Ising-master\*.png C:\Users\Simus\Desktop\Noel\Quantum-Ising-master\Results\alpha\',sprintf('%.2f\\',alpha(aa))))
     
 end
 
+disp('Task was done')
