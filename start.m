@@ -7,16 +7,61 @@ h = 0; % external field
 alpha = [0.1 0.15 0.6 0.9];
 % ref: [Romain Bachelard, Michael Kastner]Universal Threshold for the Dynamical Behavior of Lattice Systems with Long-Range Interactions
 
-N = [20 50 100 150];
+N = [100 150 200 250];
 modo = 'random'; % random|static
 
 time_init = 0;
 time_end = 1;
 time_steps = 100;
 
+repetitions = 20;
+
+summary_mean = zeros(length(alpha),length(N),1);    
+summary_std = summary_mean;
+
+for ii=1:repetitions
+    tic;
+    disp(ii)
+    [summary_mean_temp, summary_std_temp] = generate_histogram(alpha, N, modo);
+    summary_mean = summary_mean + summary_mean_temp;
+    summary_std = summary_std + summary_std_temp;
+    toc;
+end
+
+summary_mean = summary_mean./repetitions;
+summary_std = summary_std./repetitions;
+
+figure;
+ax = axes;
+imagesc(alpha,N,summary_mean,'Parent',ax);
+colorbar
+title('Mean(alpha,N)')
+xlabel('alpha')
+ylabel('N')
+set(ax,'YDir','normal')
+xlim([min(alpha) max(alpha)])
+ylim([min(N) max(N)])
+print(gcf,'mean.png','-dpng')
+
+figure;
+ax = axes;
+imagesc(alpha,N,summary_std,'Parent',ax);
+colorbar
+title('STD(alpha,N)')
+xlabel('alpha')
+ylabel('N')
+set(ax,'YDir','normal')
+xlim([min(alpha) max(alpha)])
+ylim([min(N) max(N)])
+print(gcf,'std.png','-dpng')
+
+disp('Task was done')
 
 
 
+
+
+return
 %% Simulating
 %     system('rd /s /q C:\Users\Simus\Desktop\Noel\Quantum-Ising-master\Results\alpha')
 %     system('mkdir C:\Users\Simus\Desktop\Noel\Quantum-Ising-master\Results\alpha')
