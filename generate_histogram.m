@@ -1,21 +1,4 @@
-function [summary_mean, summary_std] = generate_histogram(alpha, N, modo)
-
-%% Initial parameters
-d = 1; % dimension
-J = 1; 
-h = 0; % external field
-%alpha = [0.1 0.15 0.6 0.9];
-% ref: [Romain Bachelard, Michael Kastner]Universal Threshold for the Dynamical Behavior of Lattice Systems with Long-Range Interactions
-
-%N = [20 50 100 150];
-%modo = 'random'; % random|static
-
-time_init = 0;
-time_end = 1;
-time_steps = 100;
-
-
-
+function [summary_mean, summary_std] = generate_histogram(d,J,h,alpha,N,modo,time_init,time_end,time_steps)
 
 %% Simulating
 % !! do not change the nps value, there is an issue !!

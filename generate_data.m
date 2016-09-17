@@ -48,8 +48,9 @@ function [d_ij, mouse_idx,y_t,spin0,time_span] = generate_data(modo, N, nps,time
     %% Black Curve
  
     y_t = zeros(1,time_steps);
-    time_span = linspace(time_init,time_end,time_steps);
-
+    %time_span = linspace(time_init,time_end,time_steps);
+    time_span = logspace(log10(time_init),log10(time_end),time_steps);
+    
     if alpha >= d/2
         for t = 1:time_steps
             y_t(t) = 0.5*exp(-(2^(1+d-2*alpha)*(pi)^(d/2) )/((2*alpha-d)*gamma(d/2))*(4*J*time_span(t)/pi)^(d/alpha));
