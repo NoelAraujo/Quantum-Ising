@@ -4,17 +4,17 @@ clear all; close all; clc;
 d = 1; % dimension
 J = 1; 
 h = 0; % external field
-alpha = [0.2 0.4 0.6 0.8];
+alpha = [ 0.25 ];
 % ref: [Romain Bachelard, Michael Kastner]Universal Threshold for the Dynamical Behavior of Lattice Systems with Long-Range Interactions
 
-N = [20 40 60 80 100];
+N = [250];
 modo = 'static'; % random|static
 
-time_init = 1e-8;
+time_init = 0;
 time_end = 1;
-time_steps = 100;
+time_steps = 1000;
 
-repetitions = 10;
+repetitions = 5;
 
 summary_mean = zeros(length(alpha),length(N),1);    
 summary_std = summary_mean;

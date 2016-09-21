@@ -1,4 +1,4 @@
-function [d_ij, mouse_idx,y_t,spin0,time_span] = generate_data(modo, N, nps,time_init,time_end,time_steps,alpha,d,J)
+function [d_ij,y_t,spin0,time_span] = generate_data(modo, N, time_init,time_end,time_steps,alpha,d,J)
     if strcmp('random',modo)
         % Create N points over a line with random distance
         distance = 1;
@@ -8,7 +8,7 @@ function [d_ij, mouse_idx,y_t,spin0,time_span] = generate_data(modo, N, nps,time
     elseif strcmp('static',modo)
         % Create N points over a line with fixed unit distance
         distance = 1;
-        position = distance:distance:(N*distance);
+        position = 0:distance:(N*distance);
         % all the results should be equal fot the static case
     else
         disp('!! Problems !!')
@@ -16,20 +16,6 @@ function [d_ij, mouse_idx,y_t,spin0,time_span] = generate_data(modo, N, nps,time
         return
     end
 
-    if nps>N
-        disp('!! Problems with nps !!')
-        return
-    end
-
-
-    % the mouse indices are 'nps' random points that I follow their behavior along the time
-        % I'm using the word "mouse" in reference to the mouse at biologic
-        % experiments done with mouses
-        if nps == N
-            mouse_idx = 1:N;
-        else
-            mouse_idx = randi([1 N],[1 nps]); 
-        end
 
     %% Create a random 1/2-spin for each particle
     spin0 = 0.5*randsrc(1,N);
@@ -43,13 +29,11 @@ function [d_ij, mouse_idx,y_t,spin0,time_span] = generate_data(modo, N, nps,time
     d_ij = min(d_ij1,d_ij2); % In periodic boundary condition, I need the smallest distance.
 
     d_ij(find(d_ij==0)) = -10;% trick to speed up the program
-    %     mouse_idx = 1:20;
-    % load d_ij.mat
     %% Black Curve
  
     y_t = zeros(1,time_steps);
-    %time_span = linspace(time_init,time_end,time_steps);
-    time_span = logspace(log10(time_init),log10(time_end),time_steps);
+    time_span = linspace(time_init,time_end,time_steps);
+    %time_span = logspace(log10(time_init),log10(time_end),time_steps);
     
     if alpha >= d/2
         for t = 1:time_steps
