@@ -32,8 +32,8 @@ function [d_ij,y_t,spin0,time_span] = generate_data(modo, N, time_init,time_end,
     %% Black Curve
  
     y_t = zeros(1,time_steps);
-    time_span = linspace(time_init,time_end,time_steps);
-    %time_span = logspace(log10(time_init),log10(time_end),time_steps);
+    %time_span = linspace(time_init,time_end,time_steps);
+    time_span = logspace(log10(time_init),log10(time_end),time_steps);
     
     if alpha >= d/2
         for t = 1:time_steps
