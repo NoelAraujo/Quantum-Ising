@@ -4,10 +4,10 @@ clear all; close all; clc;
 d = 1; % dimension
 J = 1; 
 h = 0; % external field
-alpha = [0.2 0.4 0.6 0.8];
+alpha = [0];
 % ref: [Romain Bachelard, Michael Kastner]Universal Threshold for the Dynamical Behavior of Lattice Systems with Long-Range Interactions
 
-N = 1000:500:10000;
+N = 100:200:2000;
 modo = 'random'; % random|static
 
 time_init = 1e-9;
@@ -35,7 +35,7 @@ pack_colors = ['r','b','k','g'];
 close all
 figure(1);
 for ii=1:length(alpha)
-    h = plot(N,summary_mean(ii,:,1),strcat(pack_colors(ii),'o-'));
+    h = plot(log(N),log(summary_mean(ii,:,1)),strcat(pack_colors(ii),'o-'));
     set(h, 'MarkerFaceColor', get(h, 'Color'));
     hold on
     Legenda{ii} = strcat('\alpha = ',sprintf('%.2f',alpha(ii)));
@@ -58,6 +58,15 @@ xlabel('N')
 ylabel('std of t_0')
 print(gcf,'std.png','-dpng')
 
+
+figure(3);
+for ii=1:length(alpha)
+    h = plot(log(N),log(summary_std(ii,:,1)./summary_mean(ii,:,1)),strcat(pack_colors(ii),'o-'));
+    set(h, 'MarkerFaceColor', get(h, 'Color'));
+    hold on
+    Legenda{ii} = strcat('\alpha = ',sprintf('%.2f',alpha(ii)));
+end
+return
 %% creating theoreical curve
 
 h = 0; % external field
@@ -71,7 +80,7 @@ toc;
 
 figure(1)
 for ii=1:length(alpha)
-    h = plot(N,summary_mean(ii,:,1),strcat(pack_colors(ii),'o--'),'Linewidth',3);
+    h = plot(log(N),log(summary_mean(ii,:,1)),strcat(pack_colors(ii),'o-'));
     hold on
     Legenda{ii} = strcat('\alpha = ',sprintf('%.2f',alpha(ii)));
 end
