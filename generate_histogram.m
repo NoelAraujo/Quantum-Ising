@@ -34,7 +34,7 @@ for aa = 1:length(alpha)
             end
         end
         %toc;
-        %% Fit y = exp((-t/t_0)^2)
+        %% Fit y = A*exp((-t/t_0)^2) --- nao esquecer da cte
         % --> log(y) = -(t/t_0)^2
         % --> sqrt(-log(y)) = t/t_0
         % --> [[[    t = t_0*sqrt(-log(y))    ]]]
@@ -48,25 +48,28 @@ for aa = 1:length(alpha)
             interval_ii = 1:1; % on static case, all particle have the same curve
         end
         t_0 = 0;
-        parfor ii=interval_ii
+        for ii=interval_ii
             time_span0 = time_span;
             half_life = abs(spin(ii,:));
-            remover = find(half_life < 0.25);
+            remover = find(half_life < half_life(1)/2);
 
             time_span0(remover) = [];
             half_life(remover) = [];
             %logP_1 = log(half_life./(0.5.*cos(2*h*time_span0)));
+            
             %figure(1)
             %[c, gof] = fit(time_span0'.^2, N(nn)^(2*alpha(aa)-1)*logP_1','poly1');
             %plot(c,time_span0.^2, N(nn)^(2*alpha(aa)-1)*logP_1);
             %drawnow
             %stem(time_span0'.^2,sqrt(-log(half_life))')
-            [c, gof] = fit(time_span0'.^2,sqrt(-log(half_life))','poly1');
-           % figure(2)
-           % plot(c,time_span0'.^2,sqrt(-log(half_life))')
-           % drawnow
-
-            t_0(ii) = c.p1;
+            [c, gof] = fit(time_span0',sqrt(-log(half_life/half_life(1)))','poly1');
+%             figure(2)
+%             plot(c,time_span0'.^1,sqrt(-log(half_life))')
+%             drawnow
+%             figure(3)
+%             plot(time_span0,sqrt(-log(half_life/half_life(1))))
+%             pause
+            t_0(ii) = 1/c.p1;
             %t_0(ii) = gof.rsquare;
         end
         %toc;
