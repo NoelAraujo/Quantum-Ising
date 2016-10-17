@@ -30,20 +30,25 @@ for aa = 1:length(alpha)
         % the following loop is written only to be crystal clear to understand, it
         % can be improved
         if strcmp(modo,'static')
-            for i=1:1 %only 1 loop because all particle have the same curve
+            %for i=1:N(nn) %only 1 loop because all particle have the same curve
                 logP = 0*time_span;
                 for j=1:N(nn)
-                    logP = logP + log(abs(cos(2*time_span/(d_ij(i,j).^alpha(aa)))));
+                    logP = logP + log(abs(cos(2*time_span/(d_ij(1,j).^alpha(aa)))));
                 end
-                spin(i,:) = spin0(i).*cos(2*h*time_span).*exp(logP);
-            end
+                logP = logP - log(abs(cos(2*time_span/(0.5.^alpha(aa))))); % On "generate_data.m" the diagonal terms has the value "-10", now I will remove them - I made this to avoid an "if" inside the for-lopp
+                %spin(i,:) = spin0(i).*cos(2*h*time_span).*exp(logP);
+                %plot(time_span,abs(spin(i,:))); drawnow;
+                %spin = repmat(1.*cos(2*h*time_span).*exp(logP),[N(nn) 1]);
+                spin = 1.*cos(2*h*time_span).*exp(logP);
+            %end
         else
-            for i=1:N(nn)
+            for ii=1:N(nn)
                 logP = 0*time_span;
                 for j=1:N(nn)
-                    logP = logP + log(abs(cos(2*time_span/(d_ij(i,j).^alpha(aa)))));
+                    logP = logP + log(abs(cos(2*time_span/(d_ij(ii,j).^alpha(aa)))));
                 end
-                spin(i,:) = spin0(i).*cos(2*h*time_span).*exp(logP);
+                logP = logP - log(abs(cos(2*time_span/(0.5.^alpha(aa)))));
+                spin(ii,:) = spin0(ii).*cos(2*h*time_span).*exp(logP);
             end
             % plot(time_span,teorico,'k','LineWidth',3); hold on;
             % plot(time_span,abs(spin(i,:)) ); drawnow
@@ -60,19 +65,23 @@ for aa = 1:length(alpha)
         if strcmp(modo,'random')
             interval_ii = 1:N(nn);
         else
-            interval_ii = 1:1; % on static case, all particle have the same curve
+            %interval_ii = 1:1; % on static case, all particle have the same curve
+            interval_ii = 1:1;
         end
         
         parfor ii=interval_ii
             time_span0 = time_span;
-            half_life = abs(spin(ii,:));
+            if strcmp(modo,'random')
+                half_life = abs(spin(ii,:));
+            else
+               half_life = abs(spin(1,:)); 
+            end
             % My goal is to get the time to decaying HALF of the spin, then
             % I remove all the points below this level to perform a fit and
             % get is time to decay
             remover = find(half_life < half_life(1)/2);
             time_span0(remover) = [];
             half_life(remover) = [];
-            
             [c, gof] = fit(time_span0',sqrt(-log(half_life/half_life(1)))','poly1');
             % There are some decaying behavior that looks like damped
             % oscilations. Then the linearization that I did on the
@@ -89,8 +98,15 @@ for aa = 1:length(alpha)
             end
         end
         
+        
+        if strcmp(modo,'random')
+          [summary_mean(aa,nn,1), summary_std(aa,nn,1)] = normfit(t_0); 
+        else    % When I have only 1 data, I don't need take the histogram of the data. 
+           summary_mean(aa,nn,1) = t_0(1); 
+           summary_std(aa,nn,1) = 0;
+        end
         % get the mean and sigma that I would see IF I plot the histogram of the data
-        [summary_mean(aa,nn,1), summary_std(aa,nn,1)] = normfit(t_0); 
+        %[summary_mean(aa,nn,1), summary_std(aa,nn,1)] = normfit(t_0); 
         
     end
 end

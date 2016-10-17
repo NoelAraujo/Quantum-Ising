@@ -49,7 +49,7 @@ function [d_ij,spin0,time_span] = generate_data(modo, N, time_init,time_end,time
     d_ij2 = (N*distance) - d_ij1; % total lenght - distance between particles
 
     d_ij = min(d_ij1,d_ij2); % In periodic boundary condition, I need the smallest distance.
-    d_ij(find(d_ij==0)) = -10;% trick to speed up the program
+    d_ij(find(d_ij==0)) = 0.5;% trick to speed up the program
         
     %% This is necessary to overcome the problem of very fast oscillations 
     % They decay so fast the make problems during the simulation
