@@ -1,18 +1,37 @@
 %% Original  - 100% funcionando como esperado
 clear all; clc; close all;
-t = (0:0.1:3)';
 
-N = 2500;
-a = 0.25;
-logP=0*t;
+t = (0:0.1:5)';
+N = 100000;
+a = 1/4;
+
+logP = 0;
+tic;
 for i=1:N
-    logP=logP+log(abs(cos(2*t/(min(i,N+1-i))^a)));
+    logP = logP + log(abs(cos(2*t/(min(i,N+1-i))^a)));
 end
+toc;
+hold on
+%plot(t.^2,N^(2*a-1)*logP,'--')
+plot(t.^(1/a),logP,'--')
 
-plot(t.^2,N^(2*a-1)*logP)
+%% **Modificação**
+ P = 1;
+tic;
+for i=1:N
+    %P = P.*vpa(abs(cos(2*t/(min(i,N+1-i))^a)),100);
+    P = P.*(abs(cos(2*t/(min(i,N+1-i))^a)));
+end
+toc;
+hold on
+plot(t.^2,N^(2*a-1)*log(P),'--')
+
+
+legend('log(cos())+log(cos())','cos()*cos()','Location','best')
 
 
 
+return
 %% Crio os dados periodicos e aleatorios
 clear all; clc; close all;
 %t = (0:0.1:sqrt(10))';

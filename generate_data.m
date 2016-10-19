@@ -58,20 +58,7 @@ function [d_ij,spin0,time_span] = generate_data(modo, N, time_init,time_end,time
     % life time
     
     %time_span = linspace(time_init,time_end,time_steps); % Original linspace
-    
     time_span = logspace(log10(time_init),log10(time_end),time_steps);
-    %% When I need the theoretical cuve I may use this section
-    % If not in use, this section should be in comments to performance
-%     y_t = zeros(1,time_steps);
-%     if alpha >= d/2
-%         for t = 1:time_steps
-%             y_t(t) = exp(-(2^(1+d-2*alpha)*(pi)^(d/2) )/((2*alpha-d)*gamma(d/2))*(4*J*time_span(t)/pi)^(d/alpha));
-%         end
-%     else
-%         for t = 1:time_steps
-%             y_t(t) = exp(-(2^(5+2*alpha-d)*(pi)^(d/2-2) )/((d-2*alpha)*gamma(d/2))*(J^2*time_span(t)^2)*(N)^(1-(2*alpha)/d));
-%         end
-%     end
-
+    
 
 end
