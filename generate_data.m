@@ -29,9 +29,14 @@ function [d_ij,spin0,time_span] = generate_data(modo, N, time_init,time_end,time
 
     %% Formula 2
     % get the correct distance between all particles
+if strcmp('random',modo)
     r = position; % I've created the variable "r" to avoid change notation. The following code I've used on other projects
     d_ij1 = sqrt(bsxfun(@plus,dot(r,r,1)',dot(r,r,1))-2*(r'*r)); %position of each particle with each particle
-    
+else
+    parfor ii=1:N
+        d_ij1(ii) = abs(position(ii)-position(1));
+    end
+end
     % Trying something new here
 %     to_be_used = round(sqrt(N));
 %     out = 0;

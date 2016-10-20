@@ -14,10 +14,10 @@ summary_mean = zeros(length(alpha),length(N),1);
 summary_std = summary_mean;
 
 for aa = 1:length(alpha)
-    %fprintf('Alpha : %d/%d -- %.2f/%.2f \n',aa,length(alpha),alpha(aa),alpha(end))
+    fprintf('Alpha : %d/%d -- %.2f/%.2f \n',aa,length(alpha),alpha(aa),alpha(end))
     for nn=1:length(N)
         
-        %fprintf('N : %d/%d -- %d/%d \n',nn,length(N),N(nn),N(end))
+        fprintf('N : %d/%d -- %d/%d \n',nn,length(N),N(nn),N(end))
         
         % If I need to theoretical curve, I must to change the
         % generate_data-function. All that I have to do is to comments some
@@ -25,12 +25,13 @@ for aa = 1:length(alpha)
         %[d_ij,y_t,spin0,time_span] = generate_data(modo, N(nn),time_init,time_end,time_steps,alpha(aa),d,J);
         
         [d_ij,spin0,time_span] = generate_data(modo, N(nn), time_init,time_end,time_steps);
-        spin = zeros(N(nn),time_steps);
+        
         
         % the following loop is written only to be crystal clear to understand, it
         % can be improved
         if strcmp(modo,'static')
             %for i=1:N(nn) %only 1 loop because all particle have the same curve
+                spin = zeros(size(spin0));
                 logP = 0*time_span;
                 for j=1:N(nn)
                     logP = logP + log(abs(cos(2*time_span/(d_ij(1,j).^alpha(aa)))));
@@ -42,6 +43,7 @@ for aa = 1:length(alpha)
                 spin = 1.*cos(2*h*time_span).*exp(logP);
             %end
         else
+            spin = zeros(N(nn),time_steps);
             for ii=1:N(nn)
                 logP = 0*time_span;
                 for j=1:N(nn)
